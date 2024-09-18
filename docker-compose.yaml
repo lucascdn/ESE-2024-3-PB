@@ -1,0 +1,61 @@
+services:
+  #  rabbitmq:
+  #    container_name: rabbitmq
+  #    image: rabbitmq:3.13.7-management
+  #    networks:
+  #      - review-de-livros
+
+  eureka-server:
+    container_name: eureka-server
+    build:
+      context: ./eureka-server
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8761:8761"
+    networks:
+      - review-de-livros
+
+  gateway:
+    container_name: gateway
+    build:
+      context: ./gateway
+      dockerfile: docker/Dockerfile
+    ports:
+      - "9999:9999"
+    depends_on:
+      - eureka-server
+    networks:
+      - review-de-livros
+
+  acervo-micro:
+    container_name: acervo-micro
+    build:
+      context: ./acervo-micro
+      dockerfile: docker/Dockerfile
+    depends_on:
+      - eureka-server
+    networks:
+      - review-de-livros
+
+  autores-micro:
+    container_name: autores-micro
+    build:
+      context: ./autores-micro
+      dockerfile: docker/Dockerfile
+    depends_on:
+      - eureka-server
+    networks:
+      - review-de-livros
+
+  resenhas-micro:
+    container_name: resenhas-micro
+    build:
+      context: ./resenhas-micro
+      dockerfile: docker/Dockerfile
+    depends_on:
+      - eureka-server
+    networks:
+      - review-de-livros
+
+networks:
+  review-de-livros:
